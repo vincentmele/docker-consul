@@ -12,6 +12,11 @@ set -e
 # Alternatively, you can set CONSUL_BIND_CIDR to a valid CIDR.
 CONSUL_BIND=
 
+if [ -n "$CONSUL_BIND_CIDR" ] && [ -n "$CONSUL_BIND_INTERFACE" ]; then
+  echo "BIND_CIDR and BIND_INTERFACE cannot both be set. Please use only one. Exiting."
+  exit 1
+fi
+
 if [ -n "$CONSUL_BIND_CIDR" ]; then
   CONSUL_BIND_ADDRESS=$(ip -o -4 addr list | grepcidr $CONSUL_BIND_CIDR | head -n1 | awk '{print $4}' | cut -d/ -f1)
   if [ -z "$CONSUL_BIND_ADDRESS" ]; then
