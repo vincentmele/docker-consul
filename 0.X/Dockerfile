@@ -11,13 +11,17 @@ ENV DOCKER_BASE_VERSION=0.0.4
 # This is the location of the releases.
 ENV HASHICORP_RELEASES=https://releases.hashicorp.com
 
+# This sets the private repo that contains grepcidr
+ENV PRIVATE_REPO=http://repo0.inoc.com/public/alpine/v3.6/inoc/
+
 # Create a consul user and group first so the IDs get set the same way, even as
 # the rest of this may change over time.
 RUN addgroup consul && \
     adduser -S -G consul consul
 
 # Set up certificates, our base tools, and Consul.
-RUN apk add --no-cache ca-certificates curl gnupg libcap openssl grepcidr && \
+RUN apk add --no-cache ca-certificates curl gnupg libcap openssl && \
+    apk add grepcidr --no-cache --repository http://repo0.inoc.com/public/alpine/v3.6/inoc/ --allow-untrusted && \
     gpg --keyserver pgp.mit.edu --recv-keys 91A6E7F85D05C65630BEF18951852D87348FFC4C && \
     mkdir -p /tmp/build && \
     cd /tmp/build && \
