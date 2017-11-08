@@ -1,5 +1,5 @@
 FROM alpine:3.6
-MAINTAINER James Phillips <james@hashicorp.com> (@slackpad)
+MAINTAINER Vince Mele <vmele@inoc.com>
 
 # This is the release of Consul to pull in.
 ENV CONSUL_VERSION=1.0.0
