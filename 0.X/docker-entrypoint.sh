@@ -9,7 +9,20 @@ set -e
 # You can set CONSUL_BIND_INTERFACE to the name of the interface you'd like to
 # bind to and this will look up the IP and pass the proper -bind= option along
 # to Consul.
+# Alternatively, you can set CONSUL_BIND_CIDR to a valid CIDR.
 CONSUL_BIND=
+
+if [ -n "$CONSUL_BIND_CIDR" ]; then
+  CONSUL_BIND_ADDRESS=$(ip -o -4 addr list | grepcidr $CONSUL_BIND_CIDR | head -n1 | awk '{print $4}' | cut -d/ -f1)
+  if [ -z "$CONSUL_BIND_ADDRESS" ]; then
+    echo "Could not find IP for CIDR '$CONSUL_BIND_CIDR', exiting"
+    exit 1
+  fi
+
+  CONSUL_BIND="-bind=$CONSUL_BIND_ADDRESS"
+  echo "==> Found address '$CONSUL_BIND_ADDRESS' for CIDR '$CONSUL_BIND_CIDR', setting bind option..."
+fi
+
 if [ -n "$CONSUL_BIND_INTERFACE" ]; then
   CONSUL_BIND_ADDRESS=$(ip -o -4 addr list $CONSUL_BIND_INTERFACE | head -n1 | awk '{print $4}' | cut -d/ -f1)
   if [ -z "$CONSUL_BIND_ADDRESS" ]; then
